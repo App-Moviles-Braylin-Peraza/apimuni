@@ -1,0 +1,47 @@
+openapi: 3.0.0
+get:
+summary: Obtener trámite
+security:
+- bearerAuth: []
+parameters:
+- name: id
+in: path
+required: true
+schema:
+type: integer
+responses:
+'200':
+description: Trámite
+patch:
+summary: Actualizar trámite
+security:
+- bearerAuth: []
+parameters:
+- name: id
+in: path
+required: true
+requestBody:
+content:
+application/json:
+schema:
+type: object
+responses:
+'200':
+description: Actualizado
+delete:
+summary: Eliminar (soft delete)
+security:
+- bearerAuth: []
+parameters:
+- name: id
+in: path
+required: true
+responses:
+'204':
+description: Eliminado
+components:
+securitySchemes:
+bearerAuth:
+type: http
+scheme: bearer
+bearerFormat: JWT
