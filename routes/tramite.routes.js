@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const tramiteCtrl = require('../controllers/tramite.controller');
-const authMiddleware = require('../middleware/auth.middleware');
+const tramiteCtrl = require('../controllers/tramite.controller.js');
+const authMiddleware = require('../middleware/auth.middleware.js');
 
 // Todas las rutas requieren autenticación
 router.use(authMiddleware);

@@ -1,4 +1,4 @@
-const db = require('../db');
+const db = require('../db.js');
 async function createTramite({ title, description, user_id }) {
 const res = await db.query(
 `INSERT INTO tramites (title, description, user_id) VALUES ($1, $2, $3) RETURNING ${defaultFields}`,

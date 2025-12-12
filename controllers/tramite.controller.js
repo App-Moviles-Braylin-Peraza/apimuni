@@ -1,5 +1,5 @@
 const { validationResult } = require('express-validator');
-const tramiteModel = require('../models/tramite.model');
+const tramiteModel = require('../models/tramite.model.js');
 
 async function createTramite(req, res) {
   const errors = validationResult(req);

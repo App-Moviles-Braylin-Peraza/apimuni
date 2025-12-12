@@ -6,8 +6,8 @@ const path = require('path');
 const YAML = require('yamljs');
 const swaggerUi = require('swagger-ui-express');
 
-const authRoutes = require('./routes/auth.routes');
-const tramitesRoutes = require('./routes/tramite.routes');
+const authRoutes = require('./routes/auth.routes.js');
+const tramitesRoutes = require('./routes/tramite.routes.js');
 
 const swaggerPath = path.join(__dirname, 'swagger.yaml');
 let swaggerDocument = {};

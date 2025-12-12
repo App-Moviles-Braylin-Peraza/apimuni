@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const userModel = require('../models/user.model');
+const userModel = require('../models/user.model.js');
 
 
 const JWT_SECRET = process.env.JWT_SECRET || 'secret_weak_dev';

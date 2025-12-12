@@ -1,7 +1,7 @@
 const express = require('express');
 const { body } = require('express-validator');
 const router = express.Router();
-const authCtrl = require('../controllers/auth.controller');
+const authCtrl = require('../controllers/auth.controller.js');
 
 
 router.post(
