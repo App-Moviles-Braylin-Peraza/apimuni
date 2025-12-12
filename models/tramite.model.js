@@ -1,6 +1,6 @@
 const db = require('../db.js');
 
-const defaultFields = 'id, title, description, status, user_id, create_date, last_update_date';
+const defaultFields = 'id, title, description, status, user_id, creation_date, last_update_date';
 
 async function createTramite({ title, description, user_id }) {
 const res = await db.query(
