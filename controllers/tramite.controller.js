@@ -1,5 +1,41 @@
 const { validationResult } = require('express-validator');
+const tramiteModel = require('../models/tramite.model');
 
+async function createTramite(req, res) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const { title, description } = req.body;
+  const user_id = req.user.id;
+
+  try {
+    const tramite = await tramiteModel.createTramite({ title, description, user_id });
+    res.status(201).json(tramite);
+  } catch (error) {
+    res.status(500).json({ message: 'Error al crear trámite', error: error.message });
+  }
+}
+
+async function listTramites(req, res) {
+  const user_id = req.user.id;
+  const { page, limit, status, sort, order } = req.query;
+
+  try {
+    const tramites = await tramiteModel.getTramitesByUser({
+      user_id,
+      page: page ? parseInt(page) : 1,
+      limit: limit ? parseInt(limit) : 20,
+      status,
+      sort,
+      order
+    });
+    res.json(tramites);
+  } catch (error) {
+    res.status(500).json({ message: 'Error al obtener trámites', error: error.message });
+  }
+}
 
 async function getTramite(req, res) {
 const id = parseInt(req.params.id);
