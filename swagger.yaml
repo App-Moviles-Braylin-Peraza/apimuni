@@ -1,47 +1,296 @@
 openapi: 3.0.0
-get:
-summary: Obtener trámite
-security:
-- bearerAuth: []
-parameters:
-- name: id
-in: path
-required: true
-schema:
-type: integer
-responses:
-'200':
-description: Trámite
-patch:
-summary: Actualizar trámite
-security:
-- bearerAuth: []
-parameters:
-- name: id
-in: path
-required: true
-requestBody:
-content:
-application/json:
-schema:
-type: object
-responses:
-'200':
-description: Actualizado
-delete:
-summary: Eliminar (soft delete)
-security:
-- bearerAuth: []
-parameters:
-- name: id
-in: path
-required: true
-responses:
-'204':
-description: Eliminado
+info:
+  title: MuniDigital API
+  version: 1.0.0
+  description: API para gestión de trámites municipales
+servers:
+  - url: https://apimunidigital.onrender.com
+    description: Servidor de producción
+paths:
+  /auth/register:
+    post:
+      summary: Registrar nuevo usuario
+      tags:
+        - Autenticación
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                  minLength: 4
+                  example: usuario123
+                password:
+                  type: string
+                  minLength: 6
+                  example: password123
+                full_name:
+                  type: string
+                  example: Juan Pérez
+      responses:
+        '201':
+          description: Usuario registrado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Error de validación o usuario ya existe
+  /auth/login:
+    post:
+      summary: Iniciar sesión
+      tags:
+        - Autenticación
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                  example: usuario123
+                password:
+                  type: string
+                  example: password123
+      responses:
+        '200':
+          description: Login exitoso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                  user:
+                    $ref: '#/components/schemas/User'
+        '401':
+          description: Credenciales inválidas
+  /tramites:
+    get:
+      summary: Listar trámites del usuario
+      tags:
+        - Trámites
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [INICIADO, EN_PROCESO, FINALIZADO]
+        - name: sort
+          in: query
+          schema:
+            type: string
+            default: last_update_date
+        - name: order
+          in: query
+          schema:
+            type: string
+            enum: [ASC, DESC]
+            default: DESC
+      responses:
+        '200':
+          description: Lista de trámites
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tramite'
+    post:
+      summary: Crear nuevo trámite
+      tags:
+        - Trámites
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+              properties:
+                title:
+                  type: string
+                  example: Solicitud de Permiso de Construcción
+                description:
+                  type: string
+                  example: Construcción de vivienda unifamiliar
+                direccion:
+                  type: string
+                  example: Calle Principal 123
+      responses:
+        '201':
+          description: Trámite creado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tramite'
+        '400':
+          description: Error de validación
+  /tramites/{id}:
+    get:
+      summary: Obtener un trámite específico
+      tags:
+        - Trámites
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Trámite encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tramite'
+        '404':
+          description: Trámite no encontrado
+        '403':
+          description: Acceso denegado
+    put:
+      summary: Actualizar trámite
+      tags:
+        - Trámites
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Nuevo título
+                description:
+                  type: string
+                  example: Nueva descripción
+                direccion:
+                  type: string
+                  example: Nueva dirección
+                status:
+                  type: string
+                  enum: [INICIADO, EN_PROCESO, FINALIZADO]
+                  example: EN_PROCESO
+      responses:
+        '200':
+          description: Trámite actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tramite'
+        '404':
+          description: Trámite no encontrado
+        '403':
+          description: Acceso denegado
+    delete:
+      summary: Eliminar trámite (soft delete)
+      tags:
+        - Trámites
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Trámite eliminado
+        '404':
+          description: Trámite no encontrado
+        '403':
+          description: Acceso denegado
 components:
-securitySchemes:
-bearerAuth:
-type: http
-scheme: bearer
-bearerFormat: JWT
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        username:
+          type: string
+          example: usuario123
+        full_name:
+          type: string
+          example: Juan Pérez
+        created_at:
+          type: string
+          format: date-time
+          example: 2025-12-12T10:30:00.000Z
+    Tramite:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: Solicitud de Permiso de Construcción
+        description:
+          type: string
+          nullable: true
+          example: Construcción de vivienda unifamiliar
+        direccion:
+          type: string
+          nullable: true
+          example: Calle Principal 123
+        status:
+          type: string
+          enum: [INICIADO, EN_PROCESO, FINALIZADO]
+          example: EN_PROCESO
+        user_id:
+          type: integer
+          example: 1
+        creation_date:
+          type: string
+          format: date-time
+          example: 2025-12-10T08:00:00.000Z
+        last_update_date:
+          type: string
+          format: date-time
+          example: 2025-12-12T10:30:00.000Z
