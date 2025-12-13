@@ -1,6 +1,6 @@
 const db = require('../db.js');
 
-const defaultFields = 'id, title, description, direccion, status, user_id, creation_date, last_update_date';
+const defaultFields = 'id, title, description, direccion, status, user_id, creation_date, last_update_date, adjuntos';
 
 async function createTramite({ title, description, direccion, user_id }) {
 const res = await db.query(
@@ -63,6 +63,41 @@ const res = await db.query(
 return res.rowCount > 0;
 }
 
+async function addAdjunto(tramite_id, adjuntoData) {
+  const adjunto = {
+    file_url: adjuntoData.file_url,
+    file_type: adjuntoData.file_type,
+    file_size: adjuntoData.file_size,
+    uploaded_at: new Date().toISOString()
+  };
+  
+  const res = await db.query(
+    `UPDATE tramites 
+     SET adjuntos = adjuntos || $1::jsonb,
+         last_update_date = now()
+     WHERE id = $2 
+     RETURNING ${defaultFields}`,
+    [JSON.stringify(adjunto), tramite_id]
+  );
+  return res.rows[0];
+}
+
+async function removeAdjunto(tramite_id, file_url) {
+  const res = await db.query(
+    `UPDATE tramites 
+     SET adjuntos = (
+       SELECT jsonb_agg(elem)
+       FROM jsonb_array_elements(adjuntos) elem
+       WHERE elem->>'file_url' != $1
+     ),
+     last_update_date = now()
+     WHERE id = $2 
+     RETURNING ${defaultFields}`,
+    [file_url, tramite_id]
+  );
+  return res.rows[0];
+}
+
 
 module.exports = {
 createTramite,
@@ -70,4 +105,6 @@ getTramitesByUser,
 getTramiteById,
 updateTramite,
 softDeleteTramite,
+addAdjunto,
+removeAdjunto,
 };

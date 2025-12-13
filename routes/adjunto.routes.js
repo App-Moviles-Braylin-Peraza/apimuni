@@ -13,7 +13,7 @@ router.post('/:tramite_id/adjuntos', upload.single('foto'), adjuntoCtrl.uploadAd
 // GET /tramites/:tramite_id/adjuntos - Listar adjuntos de un trámite
 router.get('/:tramite_id/adjuntos', adjuntoCtrl.getAdjuntos);
 
-// DELETE /adjuntos/:id - Eliminar un adjunto
-router.delete('/adjuntos/:id', adjuntoCtrl.deleteAdjunto);
+// DELETE /tramites/:tramite_id/adjuntos - Eliminar un adjunto (enviar file_url en body)
+router.delete('/:tramite_id/adjuntos', adjuntoCtrl.deleteAdjunto);
 
 module.exports = router;
