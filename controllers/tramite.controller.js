@@ -7,11 +7,11 @@ async function createTramite(req, res) {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const { title, description } = req.body;
+  const { title, description, direccion } = req.body;
   const user_id = req.user.id;
 
   try {
-    const tramite = await tramiteModel.createTramite({ title, description, user_id });
+    const tramite = await tramiteModel.createTramite({ title, description, direccion, user_id });
     res.status(201).json(tramite);
   } catch (error) {
     res.status(500).json({ message: 'Error al crear trámite', error: error.message });
@@ -54,7 +54,7 @@ if (existente.user_id !== req.user.id) return res.status(403).json({ message: 'A
 
 
 // solo permitir ciertos campos
-const allowed = ['title', 'description', 'status'];
+const allowed = ['title', 'description', 'direccion', 'status'];
 const fields = {};
 for (const key of allowed) if (req.body[key] !== undefined) fields[key] = req.body[key];
 

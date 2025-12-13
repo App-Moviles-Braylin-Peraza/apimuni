@@ -1,11 +1,11 @@
 const db = require('../db.js');
 
-const defaultFields = 'id, title, description, status, user_id, creation_date, last_update_date';
+const defaultFields = 'id, title, description, direccion, status, user_id, creation_date, last_update_date';
 
-async function createTramite({ title, description, user_id }) {
+async function createTramite({ title, description, direccion, user_id }) {
 const res = await db.query(
-`INSERT INTO tramites (title, description, user_id) VALUES ($1, $2, $3) RETURNING ${defaultFields}`,
-[title, description, user_id]
+`INSERT INTO tramites (title, description, direccion, user_id) VALUES ($1, $2, $3, $4) RETURNING ${defaultFields}`,
+[title, description, direccion, user_id]
 );
 return res.rows[0];
 }
