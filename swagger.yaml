@@ -239,6 +239,90 @@ paths:
           description: Trámite no encontrado
         '403':
           description: Acceso denegado
+  /tramites/{tramite_id}/adjuntos:
+    post:
+      summary: Subir foto a un trámite
+      tags:
+        - Adjuntos
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tramite_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - foto
+              properties:
+                foto:
+                  type: string
+                  format: binary
+                  description: Archivo de imagen (JPG, PNG, GIF, WEBP - máx 5MB)
+      responses:
+        '201':
+          description: Adjunto subido exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Adjunto'
+        '400':
+          description: No se proporcionó archivo o formato inválido
+        '404':
+          description: Trámite no encontrado
+        '403':
+          description: Acceso denegado
+    get:
+      summary: Listar adjuntos de un trámite
+      tags:
+        - Adjuntos
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tramite_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Lista de adjuntos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Adjunto'
+        '404':
+          description: Trámite no encontrado
+        '403':
+          description: Acceso denegado
+  /adjuntos/{id}:
+    delete:
+      summary: Eliminar un adjunto
+      tags:
+        - Adjuntos
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Adjunto eliminado exitosamente
+        '404':
+          description: Adjunto no encontrado
+        '403':
+          description: Acceso denegado
 components:
   securitySchemes:
     bearerAuth:
@@ -294,3 +378,26 @@ components:
           type: string
           format: date-time
           example: 2025-12-12T10:30:00.000Z
+    Adjunto:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        tramite_id:
+          type: integer
+          example: 1
+        file_url:
+          type: string
+          example: https://res.cloudinary.com/demo/image/upload/v1234567890/munidigital/tramites/abc123.jpg
+        file_type:
+          type: string
+          example: image/jpeg
+        file_size:
+          type: integer
+          example: 524288
+          description: Tamaño del archivo en bytes
+        uploaded_at:
+          type: string
+          format: date-time
+          example: 2025-12-12T11:00:00.000Z

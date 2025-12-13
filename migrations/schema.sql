@@ -23,3 +23,16 @@ is_deleted BOOLEAN DEFAULT FALSE
 CREATE INDEX IF NOT EXISTS idx_tramites_user_id ON tramites(user_id);
 CREATE INDEX IF NOT EXISTS idx_tramites_status ON tramites(status);
 CREATE INDEX IF NOT EXISTS idx_tramites_last_update ON tramites(last_update_date DESC);
+
+
+CREATE TABLE IF NOT EXISTS tramite_adjuntos (
+id SERIAL PRIMARY KEY,
+tramite_id INTEGER NOT NULL REFERENCES tramites(id) ON DELETE CASCADE,
+file_url TEXT NOT NULL,
+file_type VARCHAR(100),
+file_size INTEGER,
+uploaded_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+);
+
+
+CREATE INDEX IF NOT EXISTS idx_adjuntos_tramite_id ON tramite_adjuntos(tramite_id);

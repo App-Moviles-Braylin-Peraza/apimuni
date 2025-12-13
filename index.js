@@ -8,6 +8,7 @@ const swaggerUi = require('swagger-ui-express');
 
 const authRoutes = require('./routes/auth.routes.js');
 const tramitesRoutes = require('./routes/tramite.routes.js');
+const adjuntosRoutes = require('./routes/adjunto.routes.js');
 
 const swaggerPath = path.join(__dirname, 'swagger.yaml');
 let swaggerDocument = {};
@@ -26,6 +27,8 @@ app.use(express.json());
 // Rutas API
 app.use('/auth', authRoutes);
 app.use('/tramites', tramitesRoutes);
+app.use('/tramites', adjuntosRoutes);
+app.use('/adjuntos', adjuntosRoutes);
 
 // Swagger Docs
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
